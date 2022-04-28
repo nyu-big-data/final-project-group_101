@@ -4,3 +4,120 @@
 *Handout date*: 2022-04-13
 
 *Submission deadline*: 2022-05-17
+
+
+## Partition Data
+We splited the `ratings.csv` into training, validation and test dataset.
+We started by partition the user identities with ratio 0.2:0.4:0.4 into train, val, and test. 
+Then we splited the user's interactions in val and test dataset based on each user's median timestamp.
+The old half of user's interactionsthe in val and test data goes into training set. Then the ratio for train, val, and test becomes 0.6:0.2:0.2.
+
+### Example:
+This is a interactions table for 10 users, the value instead of being ratings for each movie will be the the timestamp they rating on this movie.(1: oldest, 4:newest)
+
+
+`ratings.csv`
+|         | user_1 | user_2 | user_3 | user_4 | user_5 | user_6 | user_7 | user_8 | user_9 | user_10 |
+|---------|--------|--------|--------|--------|--------|--------|--------|--------|--------|---------|
+| movie_1 | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1       |
+| movie_2 | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2       |
+| movie_3 | 3      | 3      | 3      | 3      | 3      | 3      | 3      | 3      | 3      | 3       |
+| movie_4 | 4      | 4      | 4      | 4      | 4      | 4      | 4      | 4      | 4      | 4       |
+
+
+**Training Set**
+|         | user_1 | user_2 | user_3 | user_4 | user_5 | user_6 | user_7 | user_8 | user_9 | user_10 |
+|---------|--------|--------|--------|--------|--------|--------|--------|--------|--------|---------|
+| movie_1 | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1      | 1       |
+| movie_2 | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2      | 2       |
+| movie_3 | 3      | 3      |        |        |        |        |        |        |        |         |
+| movie_4 | 4      | 4      |        |        |        |        |        |        |        |         |
+
+
+**Validation Set**
+|         | user_3 | user_4 | user_5 | user_6 |
+|---------|--------|--------|--------|--------|
+| movie_3 | 3      | 3      | 3      | 3      |
+| movie_4 | 4      | 4      | 4      | 4      |
+
+
+**Test Set**
+|         | user_7 | user_8 | user_9 | user_10 |
+|---------|--------|--------|--------|---------|
+| movie_3 | 3      | 3      | 3      | 3       |
+| movie_4 | 4      | 4      | 4      | 4       |
+
+
+## Model Fitting & Evaluation
+We applied baseline model to both `ml-latest-small/ratings.csv` and `ml-latest/ratings.csv` with damping value = 101, and calculated the top 100 movies with highest average ratings score in training set.
+And we used MAP with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+
+
+|            | ratings_small       | ratings_full         |
+|------------|---------------------|----------------------|
+| validation | 0.04198664465910052 | 0.014707890447754304 |
+| test       | 0.09152927816556783 | 0.026501548702463486 |
+
+
+
+## The data set
+
+This project used the [MovieLens](https://grouplens.org/datasets/movielens/latest/) datasets collected by 
+> F. Maxwell Harper and Joseph A. Konstan. 2015. 
+> The MovieLens Datasets: History and Context. 
+> ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4: 19:1–19:19. https://doi.org/10.1145/2827872
+
+The data is hosted in NYU's HPC environment under `/scratch/work/courses/DSGA1004-2021/movielens`.
+
+Two versions of the dataset are provided: a small sample (`ml-latest-small`, 9000 movies and 600 users) and a larger sample (`ml-latest`, 58000 movies and 280000 users).
+Each version of the data contains rating and tag interactions, and the larger sample includes "tag genome" data for each movie, which you may consider as additional features beyond
+the collaborative filter.
+Each version of the data includes a README.txt file which explains the contents and structure of the data which are stored in CSV files.
+
+
+## Compile
+
+1. Connect to Peel
+```bash
+ssh <NetId>@peel.hpc.nyu.edu
+```
+2. Git clone the repository
+```bash
+git clone git@github.com:nyu-big-data/final-project-group_101.git
+cd CheckPoint Submission
+```
+3. To run Spark jobs on the Peel cluster,  run the following command:
+```bash
+source shell_setup.sh
+```
+4. Open and run the `PartitionData.ipynb` to partition the data.
+
+5. Load data onto HDFS
+```bash
+hfs -put Data/ratings_small_train.csv
+hfs -put Data/ratings_small_val.csv
+hfs -put Data/ratings_small_test.csv
+
+hfs -put Data/ratings_full_train.csv
+hfs -put Data/ratings_full_val.csv
+hfs -put Data/ratings_full_test.csv
+```
+6. Call spark-submit to run the code
+**ratings_small**
+```bash
+spark-submit baseline_small.py
+```
+**ratings_full**
+```bash
+spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_fitting.py
+spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_predicting.py
+```
+7. Once you submit the job to Peel, Spark will continuously output a log until completion. In this log, you will receive a tracking URL to check the progress.
+```bash
+tracking URL: http://horton.hpc.nyu.edu:8088/proxy/application_1613664569968_2108
+```
+8. The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Note that your Application ID will be different every time you spark-submita job. To see the output of the scripts, run the following command:
+```bash
+yarn logs -applicationId <your_application_id> -log_files stdout
+yarn logs -applicationId <your_application_id> -log_files stderr
+```
