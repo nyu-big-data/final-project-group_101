@@ -77,16 +77,24 @@ Each version of the data includes a README.txt file which explains the contents 
 ```bash
 ssh <NetId>@peel.hpc.nyu.edu
 ```
+
+
 2. Git clone the repository
 ```bash
 git clone git@github.com:nyu-big-data/final-project-group_101.git
 cd CheckPoint Submission
 ```
+
+
 3. To run Spark jobs on the Peel cluster,  run the following command:
 ```bash
 source shell_setup.sh
 ```
+
+
 4. Open and run the `PartitionData.ipynb` to partition the data.
+
+
 
 5. Load data onto HDFS
 ```bash
@@ -98,20 +106,30 @@ hfs -put Data/ratings_full_train.csv
 hfs -put Data/ratings_full_val.csv
 hfs -put Data/ratings_full_test.csv
 ```
+
+
 6. Call spark-submit to run the code
+
+
 **ratings_small**
 ```bash
 spark-submit baseline_small.py
 ```
+
+
 **ratings_full**
 ```bash
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_fitting.py
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_predicting.py
 ```
+
+
 7. Once you submit the job to Peel, Spark will continuously output a log until completion. In this log, you will receive a tracking URL to check the progress.
 ```bash
 tracking URL: http://horton.hpc.nyu.edu:8088/proxy/application_1613664569968_2108
 ```
+
+
 8. The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Note that your Application ID will be different every time you spark-submita job. To see the output of the scripts, run the following command:
 ```bash
 yarn logs -applicationId <your_application_id> -log_files stdout
