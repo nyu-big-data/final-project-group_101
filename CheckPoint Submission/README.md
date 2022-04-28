@@ -45,8 +45,9 @@ This is a interactions table for 10 users, the value instead of being ratings fo
 
 
 ## Model Fitting & Evaluation
-We applied baseline model to both `ml-latest-small/ratings.csv` and `ml-latest/ratings.csv` with damping value = 101, and calculated the top 100 movies with highest average ratings score in training set.
-And we used MAP with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+### Popularity Baseline Model
+We applied popularity baseline model to both `ml-latest-small/ratings.csv` and `ml-latest/ratings.csv` with damping value = 101, and predicted the top 100 movies with highest average ratings score in training set.
+And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
 
 
 |            | ratings_small       | ratings_full         |
@@ -54,6 +55,17 @@ And we used MAP with package `pyspark.ml.evaluation.RankingEvaluator` to evaluat
 | validation | 0.04198664465910052 | 0.014707890447754304 |
 | test       | 0.09152927816556783 | 0.026501548702463486 |
 
+### Alternating Least Squares Model
+Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `maxIter=5`, `regParam=0.01`, and `rank = 10`. We predicted the top 100 movies with highest average ratings score from training set for each user.
+
+
+And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+
+
+|            | ratings_small      |
+|------------|--------------------|
+| validation | 0.8585073147545601 |
+| test       | 0.9105325855961297 |
 
 
 ## The data set
