@@ -1,9 +1,5 @@
 # DSGA1004 - BIG DATA
-## Final project
-
-*Handout date*: 2022-04-13
-
-*Submission deadline*: 2022-05-17
+## Final project-Check Point Submission
 
 
 ## Partition Data
@@ -49,8 +45,9 @@ This is a interactions table for 10 users, the value instead of being ratings fo
 
 
 ## Model Fitting & Evaluation
-We applied baseline model to both `ml-latest-small/ratings.csv` and `ml-latest/ratings.csv` with damping value = 101, and calculated the top 100 movies with highest average ratings score in training set.
-And we used MAP with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+### Popularity Baseline Model
+We applied popularity baseline model to both `ml-latest-small/ratings.csv` and `ml-latest/ratings.csv` with damping value = 101, and predicted the top 100 movies with highest average ratings score in training set.
+And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
 
 
 |            | ratings_small       | ratings_full         |
@@ -58,6 +55,17 @@ And we used MAP with package `pyspark.ml.evaluation.RankingEvaluator` to evaluat
 | validation | 0.04198664465910052 | 0.014707890447754304 |
 | test       | 0.09152927816556783 | 0.026501548702463486 |
 
+### Alternating Least Squares Model
+Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `maxIter=5`, `regParam=0.01`, and `rank = 10`. We predicted the top 100 movies with highest average ratings score from training set for each user.
+
+
+And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+
+
+|            | ratings_small      |
+|------------|--------------------|
+| validation | 0.8585073147545601 |
+| test       | 0.9105325855961297 |
 
 
 ## The data set
@@ -81,16 +89,24 @@ Each version of the data includes a README.txt file which explains the contents 
 ```bash
 ssh <NetId>@peel.hpc.nyu.edu
 ```
+
+
 2. Git clone the repository
 ```bash
 git clone git@github.com:nyu-big-data/final-project-group_101.git
 cd CheckPoint Submission
 ```
+
+
 3. To run Spark jobs on the Peel cluster,  run the following command:
 ```bash
 source shell_setup.sh
 ```
+
+
 4. Open and run the `PartitionData.ipynb` to partition the data.
+
+
 
 5. Load data onto HDFS
 ```bash
@@ -102,22 +118,35 @@ hfs -put Data/ratings_full_train.csv
 hfs -put Data/ratings_full_val.csv
 hfs -put Data/ratings_full_test.csv
 ```
+
+
 6. Call spark-submit to run the code
+
+
 **ratings_small**
 ```bash
 spark-submit baseline_small.py
 ```
+
+
 **ratings_full**
 ```bash
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_fitting.py
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_predicting.py
 ```
+
+
 7. Once you submit the job to Peel, Spark will continuously output a log until completion. In this log, you will receive a tracking URL to check the progress.
 ```bash
 tracking URL: http://horton.hpc.nyu.edu:8088/proxy/application_1613664569968_2108
 ```
-8. The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Note that your Application ID will be different every time you spark-submita job. To see the output of the scripts, run the following command:
+
+
+8. To see the output of the scripts, run the following command:
+
 ```bash
 yarn logs -applicationId <your_application_id> -log_files stdout
 yarn logs -applicationId <your_application_id> -log_files stderr
 ```
+
+**Note:** The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Your Application ID will be different every time you spark-submita job. 
