@@ -132,9 +132,9 @@ tracking URL: http://horton.hpc.nyu.edu:8088/proxy/application_1613664569968_210
 
 8. To see the output of the scripts, run the following command:
 
-
-Note: The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Your Application ID will be different every time you spark-submita job. 
 ```bash
 yarn logs -applicationId <your_application_id> -log_files stdout
 yarn logs -applicationId <your_application_id> -log_files stderr
 ```
+
+**Note:** The Application ID is the last part of url, or in the example above, application_1613664569968_2108. Your Application ID will be different every time you spark-submita job. 
