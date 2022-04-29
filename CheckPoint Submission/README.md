@@ -1,5 +1,13 @@
 # DSGA1004 - BIG DATA
 ## Final project-Check Point Submission
+**Group Number:** 101
+
+
+**Group Member**
+
+- Cooper Zhao(jz5246)
+- Vanessa Xu(zx657)
+- Catherine Zheng(rz2432)
 
 
 ## Partition Data
