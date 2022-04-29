@@ -52,8 +52,8 @@ And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to eva
 
 |            | ratings_small       | ratings_full         |
 |------------|---------------------|----------------------|
-| validation | 0.04198664465910052 | 0.014707890447754304 |
-| test       | 0.09152927816556783 | 0.026501548702463486 |
+| validation | 0.04200661766182382 | 0.025203392149632926 |
+| test       | 0.11034154976775325 | 0.048323563592365296 |
 
 ### Alternating Least Squares Model
 Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `maxIter=5`, `regParam=0.01`, and `rank = 10`. We predicted the top 100 movies with highest average ratings score from training set for each user.

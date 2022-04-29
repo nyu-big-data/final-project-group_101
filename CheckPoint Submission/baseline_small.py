@@ -42,37 +42,40 @@ def main(spark, netID):
     query_train = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)+101) AS Utility_Score from ratings_small_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
     top100 = query_train.select("movieId")
     top100 = top100.agg(collect_list("movieId"))
-    top100 = top100.withColumnRenamed("collect_list(movieId)", "label")
-    top100 = top100.withColumn('label', col('label').cast(ArrayType(DoubleType())))
+    top100 = top100.withColumnRenamed("collect_list(movieId)", "prediction")
+    top100 = top100.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
+    
     
     
     # Validation
     # generate the required dataset for evaluate the performence using MAP
-    temp_val = ratings_small_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "prediction")
-    temp_val = temp_val.filter("userId is not null").select("prediction")
-    temp_val = temp_val.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
+    temp_val = ratings_small_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    temp_val = temp_val.filter("userId is not null").select("label")
+    temp_val = temp_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     dataset_val = temp_val.join(top100)
     
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    val_MAE = evaluator.evaluate(dataset_val)
+    val_MAP = evaluator.evaluate(dataset_val)
     print("Validation Set Finished")
+    
     
     # Test
     # generate the required dataset for evaluate the performence using MAP
-    temp_test = ratings_small_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "prediction")
-    temp_test = temp_test.filter("userId is not null").select("prediction")
-    temp_test = temp_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
+    temp_test = ratings_small_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    temp_test = temp_test.filter("userId is not null").select("label")
+    temp_test = temp_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     dataset_test = temp_test.join(top100)
     print("Test Set Finished")
     
+    
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    test_MAE = evaluator.evaluate(dataset_test)
+    test_MAP = evaluator.evaluate(dataset_test)
     
     
-    print("Validation Performence with MAE: ", val_MAE)
-    print("Test Performence with MAE: ", test_MAE)
+    print("Validation Performence with MAE: ", val_MAP)
+    print("Test Performence with MAE: ", test_MAP)
     
 
 

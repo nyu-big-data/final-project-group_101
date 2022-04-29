@@ -33,35 +33,35 @@ def main(spark, netID):
     
     # convert top 100 movie to a list for future evaluation
     top100 = top100.agg(collect_list("movieId"))
-    top100 = top100.withColumnRenamed("collect_list(movieId)", "label")
-    top100 = top100.withColumn('label', col('label').cast(ArrayType(DoubleType())))
+    top100 = top100.withColumnRenamed("collect_list(movieId)", "prediction")
+    top100 = top100.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     
 
     # Validation
     # generate the required dataset for evaluate the performence using MAP
-    temp_val = ratings_full_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "prediction")
-    temp_val = temp_val.filter("userId is not null").select("prediction")
-    temp_val = temp_val.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
+    temp_val = ratings_full_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    temp_val = temp_val.filter("userId is not null").select("label")
+    temp_val = temp_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     dataset_val = temp_val.join(top100)
     
     # Evaluate validation set
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    val_MAE = evaluator.evaluate(dataset_val)
-    print("Validation Set Finished: ", val_MAE)
+    val_MAP = evaluator.evaluate(dataset_val)
+    print("Validation Set Finished: ", val_MAP)
     
     # Test
     # generate the required dataset for evaluate the performence using MAP
-    temp_test = ratings_full_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "prediction")
-    temp_test = temp_test.filter("userId is not null").select("prediction")
-    temp_test = temp_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
+    temp_test = ratings_full_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    temp_test = temp_test.filter("userId is not null").select("label")
+    temp_test = temp_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     dataset_test = temp_test.join(top100)
     
     # Evaluate test set
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    test_MAE = evaluator.evaluate(dataset_test)
-    print("Test Set Finished: ", test_MAE)
+    test_MAP = evaluator.evaluate(dataset_test)
+    print("Test Set Finished: ", test_MAP)
 
     
     

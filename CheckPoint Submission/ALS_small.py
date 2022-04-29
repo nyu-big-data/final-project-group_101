@@ -59,8 +59,8 @@ def main(spark, netID):
     
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    val_MAE = evaluator.evaluate(dataset_val)
-    print("Validation Performence with MAE: ", val_MAE)
+    val_MAP = evaluator.evaluate(dataset_val)
+    print("Validation Performence with MAP: ", val_MAP)
     
     
     # Test
@@ -81,8 +81,8 @@ def main(spark, netID):
     
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
-    test_MAE = evaluator.evaluate(dataset_test)
-    print("Test Performence with MAE: ", test_MAE)
+    test_MAP = evaluator.evaluate(dataset_test)
+    print("Test Performence with MAP: ", test_MAP)
 
 
 
