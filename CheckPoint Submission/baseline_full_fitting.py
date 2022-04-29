@@ -44,7 +44,7 @@ def main(spark, netID):
     print("finish part 3")
     top100_path = "hdfs:/user/" + netID + "/top100_full.csv"
     top100.createOrReplaceTempView('top100')
-    top100.write.csv("top100_path")
+    top100.write.csv(top100_path)
     
 
 
