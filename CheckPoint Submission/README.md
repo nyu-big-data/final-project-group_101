@@ -64,8 +64,9 @@ And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to eva
 | test       | 0.11034154976775325 | 0.048323563592365296 |
 
 ### Alternating Least Squares Model
-Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `maxIter=5`, `regParam=0.01`, and `rank = 10`. We predicted the top 100 movies with highest average ratings score from training set for each user.
-
+#### `model.transform(test)` 
+Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `maxIter=5`, `regParam=0.01`, and `rank = 10`. 
+We used `model.transform` to predicted the top 100 movies with highest average ratings score from training set for each user. This is written in `ALS_small.py`
 
 And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
 
@@ -74,6 +75,19 @@ And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to eva
 |------------|--------------------|
 | validation | 0.8585073147545601 |
 | test       | 0.9105325855961297 |
+
+#### `model.recommendForUserSubset(test, 100)`
+We also found there is another prediction function `model.recommendForUserSubset()`. This is written in `ALS_small_new.py`
+So we applied this function with hyperparameter `rank = 100`, `maxIter=10`, `regParam=0.1`, and `alpha = 10`. 
+
+And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
+
+|            | ratings_small        |
+|------------|----------------------|
+| validation | 0.007910911442319646 |
+| test       | 0.12172311773663758  |
+
+
 
 
 ## The data set

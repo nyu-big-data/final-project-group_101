@@ -14,6 +14,7 @@ from pyspark.sql.functions import collect_list, explode, array_repeat, col
 from pyspark.sql.types import ArrayType, DoubleType
 from pyspark.ml.evaluation import RankingEvaluator
 
+
     
     
     
@@ -78,7 +79,6 @@ def main(spark, netID):
     
     print("Validation Set Performence with MAP: ", val_MAP)
     print("Test Set Performence with MAP: ", test_MAP)
-    
 
 
 # Only enter this block if we're in main
