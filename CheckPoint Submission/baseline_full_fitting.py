@@ -29,7 +29,8 @@ def main(spark, netID):
 
 
     print('Reading ratings.csv and specifying schema')
-    ratings_full_train = spark.read.csv('hdfs:/user/jz5246/ratings_full_train.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    full_train_path = "hdfs:/user/" + netID + "/ratings_full_train.csv"
+    ratings_full_train = spark.read.csv(full_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
     print("finish part 1")
     
     # Give the dataframe a temporary view so we can run SQL queries
@@ -41,9 +42,9 @@ def main(spark, netID):
     query_train = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)+101) AS Utility_Score from ratings_full_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
     top100 = query_train.select("movieId")
     print("finish part 3")
-    
+    top100_path = "hdfs:/user/" + netID + "/top100_full.csv"
     top100.createOrReplaceTempView('top100')
-    top100.write.csv("hdfs:/user/jz5246/top100_full.csv")
+    top100.write.csv("top100_path")
     
 
 

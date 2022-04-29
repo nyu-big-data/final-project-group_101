@@ -131,16 +131,22 @@ hfs -put Data/ratings_full_test.csv
 6. Call spark-submit to run the code
 
 
-**ratings_small**
+**Popularity Baseline Model ratings_small**
 ```bash
 spark-submit baseline_small.py
 ```
 
 
-**ratings_full**
+**Popularity Baseline Model ratings_full**
 ```bash
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_fitting.py
 spark-submit --conf  spark.dynamicAllocation.enabled=true --conf spark.shuffle.service.enabled=false --conf spark.dynamicAllocation.shuffleTracking.enabled=true baseline_full_predicting.py
+```
+
+
+**ALS Model on ratings_small**
+```bash
+spark-submit ALS_small.py
 ```
 
 

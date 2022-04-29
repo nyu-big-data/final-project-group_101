@@ -27,9 +27,13 @@ def main(spark, netID):
 
 
     print('Reading ratings.csv and specifying schema')
-    ratings_small_train = spark.read.csv('hdfs:/user/jz5246/ratings_small_train.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_small_val = spark.read.csv('hdfs:/user/jz5246/ratings_small_val.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_small_test = spark.read.csv('hdfs:/user/jz5246/ratings_small_test.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    small_train_path = "hdfs:/user/" + netID + "/ratings_small_train.csv"
+    small_val_path = "hdfs:/user/" + netID + "/ratings_small_val.csv"
+    small_train_test = "hdfs:/user/" + netID + "/ratings_small_test.csv"
+    
+    ratings_small_train = spark.read.csv(small_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_small_val = spark.read.csv(small_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_small_test = spark.read.csv(small_train_test, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
 
     # Give the dataframe a temporary view so we can run SQL queries
     ratings_small_train.createOrReplaceTempView('ratings_small_train')

@@ -20,9 +20,15 @@ def main(spark, netID):
     print('Final Project BaseLine Model')
 
     print('Reading ratings.csv and specifying schema')
-    ratings_full_val = spark.read.csv('hdfs:/user/jz5246/ratings_full_val.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_full_test = spark.read.csv('hdfs:/user/jz5246/ratings_full_test.csv', schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    top100 = spark.read.csv("hdfs:/user/jz5246/top100_full.csv", schema='movieId float')
+    
+    full_train_path = "hdfs:/user/" + netID + "/ratings_full_train.csv"
+    full_val_path = "hdfs:/user/" + netID + "/ratings_full_val.csv"
+    full_test_path = "hdfs:/user/" + netID + "/ratings_full_test.csv"
+    top100_path = "hdfs:/user/" + netID + "/top100_full.csv"
+    
+    ratings_full_val = spark.read.csv(full_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_full_test = spark.read.csv(full_test_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    top100 = spark.read.csv(top100_path, schema='movieId float')
     print("finish part 1")
     
     # Give the dataframe a temporary view
@@ -48,7 +54,7 @@ def main(spark, netID):
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
     val_MAP = evaluator.evaluate(dataset_val)
-    print("Validation Set Finished: ", val_MAP)
+    print("Validation Set Performence with MAP: ", val_MAP)
     
     # Test
     # generate the required dataset for evaluate the performence using MAP
@@ -61,7 +67,7 @@ def main(spark, netID):
     evaluator = RankingEvaluator()
     evaluator.setPredictionCol("prediction")
     test_MAP = evaluator.evaluate(dataset_test)
-    print("Test Set Finished: ", test_MAP)
+    print("Test Set Performence with MAP:: ", test_MAP)
 
     
     
