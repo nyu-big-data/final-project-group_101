@@ -64,10 +64,6 @@ And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to eva
 | test       | 0.11034154976775325 | 0.048323563592365296 |
 
 ### Alternating Least Squares Model
-#### `model.transform(test)` 
-
-
-#### `model.recommendForUserSubset(test, 100)`
 Spark's alternating least squares (ALS) method to learn latent factor representations and apply to `ml-latest-small/ratings.csv` with hyperparameter `rank = 100`, `maxIter=10`, `regParam=0.1`, and `alpha = 10`. 
 We use the function `model.recommendForUserSubset()` to get the top 100 personalized recommendations. 
 And we used MAP@100 with package `pyspark.ml.evaluation.RankingEvaluator` to evaluate the model performence.
