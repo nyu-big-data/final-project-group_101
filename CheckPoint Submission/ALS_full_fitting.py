@@ -16,6 +16,9 @@ from pyspark.ml.evaluation import RankingEvaluator
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 
+    
+    
+    
 def main(spark, netID):
     '''Main routine for Lab Solutions
     Parameters
@@ -23,29 +26,29 @@ def main(spark, netID):
     spark : SparkSession object
     netID : string, netID of student to find files in HDFS
     '''
-    print('Final Project ALS Model on Small')
+    print('Final Project ALS Model Fitting on Full')
 
 
     print('Reading ratings.csv and specifying schema')
-    small_train_path = "hdfs:/user/" + netID + "/ratings_small_train.csv"
-    small_val_path = "hdfs:/user/" + netID + "/ratings_small_val.csv"
-    small_test_path = "hdfs:/user/" + netID + "/ratings_small_test.csv"
+    full_train_path = "hdfs:/user/" + netID + "/ratings_full_train.csv"
+    full_val_path = "hdfs:/user/" + netID + "/ratings_full_val.csv"
+    full_test_path = "hdfs:/user/" + netID + "/ratings_full_test.csv"
     
-    ratings_small_train = spark.read.csv(small_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_small_val = spark.read.csv(small_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_small_test = spark.read.csv(small_test_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_full_train = spark.read.csv(full_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_full_val = spark.read.csv(full_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
+    ratings_full_test = spark.read.csv(full_test_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
 
     # Give the dataframe a temporary view so we can run SQL queries
-    ratings_small_train.createOrReplaceTempView('ratings_small_train')
-    ratings_small_val.createOrReplaceTempView('ratings_small_val')
-    ratings_small_test.createOrReplaceTempView('ratings_small_test')
+    ratings_full_train.createOrReplaceTempView('ratings_full_train')
+    ratings_full_val.createOrReplaceTempView('ratings_full_val')
+    ratings_full_test.createOrReplaceTempView('ratings_full_test')
     
     # Create Label(actual value) for validation set
-    label_val = ratings_small_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    label_val = ratings_full_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
     label_val = label_val.filter("userId is not null").select("label", "userId")
     label_val = label_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     # Create Label(actual value) for test set
-    label_test = ratings_small_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
+    label_test = ratings_full_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
     label_test = label_test.filter("userId is not null").select("label", "userId")
     label_test = label_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
@@ -54,7 +57,7 @@ def main(spark, netID):
     # build the model
     als = ALS(rank = 100, maxIter=10, regParam=0.1, alpha = 10, userCol="userId", itemCol="movieId", ratingCol="rating",
           coldStartStrategy="drop")
-    model = als.fit(ratings_small_train)
+    model = als.fit(ratings_full_train)
     
     
     # Validation Prediction
@@ -91,12 +94,14 @@ def main(spark, netID):
     
 
 
+
 # Only enter this block if we're in main
 if __name__ == "__main__":
 
     # Create the spark session object
-    spark = SparkSession.builder.appName('baseline').getOrCreate()
-
+    spark = SparkSession.builder.appName('baseline').config("spark.sql.broadcastTimeout", "36000").getOrCreate()
+  
+  
     # Get user netID from the command line
     netID = getpass.getuser()
 
