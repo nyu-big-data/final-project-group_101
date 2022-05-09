@@ -20,7 +20,7 @@ small_train_path = "/home/" + netID + "/ratings_small_train.csv"
 small_val_path = "/home/" + netID + "/ratings_small_val.csv"
 small_test_path = "/home/" + netID + "/ratings_small_test.csv"
 
-# Load dataset fro HDFS
+# Load dataset from HDFS
 ratings_small_train = pd.read_csv(small_train_path, names = ('userId', 'movieId', 'rating', 'timestamp'))
 ratings_small_val = pd.read_csv(small_val_path, names = ('userId', 'movieId', 'rating', 'timestamp', "median_timestamp"))
 ratings_small_test = pd.read_csv(small_test_path, names = ('userId', 'movieId', 'rating', 'timestamp', "median_timestamp"))
