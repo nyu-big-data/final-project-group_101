@@ -33,9 +33,7 @@ def main(spark, netID):
     small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.pkl"
     small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.pkl"
 
-
-    current_directory = Path(__file__).parent #Get current directory
-    file = open(os.path.join(("hdfs:/user/" + netID+"/","als_annoy_small_validation.pkl" ), 'rb')) #rb = read bytes because we are reading the file
+    file = open(small_train_path, 'rb') #rb = read bytes because we are reading the file
      
     #loadedData = pickle.load(file)
     #file = open('hdfs://horton.hpc.nyu.edu:8020/user/rz2432/als_annoy_small_validation.pkl', 'rb')
