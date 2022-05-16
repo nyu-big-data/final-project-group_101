@@ -24,7 +24,7 @@ import numpy as np
 from tqdm import tqdm_notebook as tqdm 
 import matplotlib.pyplot as plt 
 #pip-install annoy
-from annoy import AnnoyIndex
+#from annoy import AnnoyIndex
 #pip install pyarrow
 
 
