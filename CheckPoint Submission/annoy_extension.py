@@ -45,14 +45,14 @@ def main(spark, netID):
     test.createOrReplaceTempView("test_table")
 
 
-    trainu = spark.sql("select label,userId,prediction from train_table").toDF()
+    trainu = spark.sql("select label,userId,prediction from train_table").toDF('label','userId','prediction')
     trainu = trainu.toPandas()
 
-    valu = spark.sql("select label,userId,prediction from val_table").toDF()
+    valu = spark.sql("select label,userId,prediction from val_table").toDF('label','userId','prediction')
     valu = valu.toPandas()
 
-    testu = spark.sql("select label,userId,prediction from test_table").toDF()
-    testu = test.toPandas()
+    testu = spark.sql("select label,userId,prediction from test_table").toDF('label','userId','prediction')
+    testu = testu.toPandas()
 
 
 
