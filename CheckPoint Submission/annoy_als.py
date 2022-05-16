@@ -66,7 +66,7 @@ def main(spark, netID):
 
     predictions_train = predictions_train.select("userId", "recommendations.movieId")
     predictions_train= predictions_train.withColumnRenamed("movieId", "prediction")
-    dataset_train = label_train.join(predictions_train label_train.userId == predictions_train.userId, 'inner')
+    dataset_train = label_train.join(predictions_train,label_train.userId == predictions_train.userId, 'inner')
     dataset_train = dataset_train.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_train = dataset_train.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
