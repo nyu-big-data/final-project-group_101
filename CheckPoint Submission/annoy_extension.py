@@ -23,7 +23,6 @@ import time
 import numpy as np
 from tqdm import tqdm_notebook as tqdm 
 import matplotlib.pyplot as plt 
-%matplotlib inline
 #pip install pyarrow
 
 
