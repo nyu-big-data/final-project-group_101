@@ -31,28 +31,42 @@ def main(spark, netID):
     netID = getpass.getuser()
 
     print('Reading ratings.csv and specifying schema')
-    small_train_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
-    small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
-    small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
+    #small_train_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
+    #small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
+    #small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
 
-    train =spark.read.parquet(small_train_path)
-    val=spark.read.parquet(small_val_path)
-    test =spark.read.parquet(small_test_path)
+    user_vector_path = "hdfs:/user/" + netID + "/user_vec.parquet"
+    item_vector_path = "hdfs:/user/" + netID + "/item_vec.parquet"
+
+    #train =spark.read.parquet(small_train_path)
+    #val=spark.read.parquet(small_val_path)
+    #test =spark.read.parquet(small_test_path)
+    user =spark.read.parquet(user_vector_path)
+    vec =spark.read.parquet(item_vector_path)
+
+    user.createOrReplaceTempView("user")
+    item.createOrReplaceTempView("item")
+
+    #train.createOrReplaceTempView("train_table")
+    #val.createOrReplaceTempView("val_table")
+    #test.createOrReplaceTempView("test_table")
+
+    useru = spark.sql("select id,feature from user").toDF('id','feature')
+    useru = useru.toPandas()
 
 
-    train.createOrReplaceTempView("train_table")
-    val.createOrReplaceTempView("val_table")
-    test.createOrReplaceTempView("test_table")
+    itemu = spark.sql("select id,feature from item").toDF('id','feature')
+    itemu = itemu.toPandas()
 
 
-    trainu = spark.sql("select label,userId,prediction from train_table").toDF('label','userId','prediction')
-    trainu = trainu.toPandas()
+    #trainu = spark.sql("select label,userId,prediction from train_table").toDF('label','userId','prediction')
+    #trainu = trainu.toPandas()
 
-    valu = spark.sql("select label,userId,prediction from val_table").toDF('label','userId','prediction')
-    valu = valu.toPandas()
+    #valu = spark.sql("select label,userId,prediction from val_table").toDF('label','userId','prediction')
+    #valu = valu.toPandas()
 
-    testu = spark.sql("select label,userId,prediction from test_table").toDF('label','userId','prediction')
-    testu = testu.toPandas()
+    #testu = spark.sql("select label,userId,prediction from test_table").toDF('label','userId','prediction')
+    #testu = testu.toPandas()
 
 
 
