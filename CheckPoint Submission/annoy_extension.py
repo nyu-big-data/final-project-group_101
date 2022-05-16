@@ -29,18 +29,12 @@ def main(spark, netID):
     netID = getpass.getuser()
 
     print('Reading ratings.csv and specifying schema')
-    small_train_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.pkl"
-    small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.pkl"
-    small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.pkl"
+    small_train_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
+    small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
+    small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
 
-    file = open(small_train_path, 'rb') #rb = read bytes because we are reading the file
-     
-    #loadedData = pickle.load(file)
-    #file = open('hdfs://horton.hpc.nyu.edu:8020/user/rz2432/als_annoy_small_validation.pkl', 'rb')
-
-    
-    small_train = pickle.load(file)
-    print(small_train)
+    train = pd.read_parquet(small_train_path)
+    print(train.head())
 
 
 # Only enter this block if we're in main
