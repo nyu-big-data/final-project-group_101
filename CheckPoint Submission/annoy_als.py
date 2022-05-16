@@ -93,8 +93,8 @@ def main(spark, netID):
 
     # generate item vector and user vector
 
-    user_vec = model.userFactors.toDF(['id','features'])
-    item_vec = model.itemFactors.toDF(['id','features'])
+    user_vec = model.userFactors.toDF('id','features')
+    item_vec = model.itemFactors.toDF('id','features')
     
     als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
     als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
