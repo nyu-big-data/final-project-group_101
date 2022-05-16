@@ -90,12 +90,12 @@ def main(spark, netID):
         n_queries = len(queries)
 
             def single_query(query):
-            start = time.time()
-            if type(query) is not np.ndarray:
-                query = np.array(query)
-            res = np.argsort(-data.dot(query))[:k] 
-            interval = time.time() - start
-            return interval, res
+                start = time.time()
+                if type(query) is not np.ndarray:
+                    query = np.array(query)
+                res = np.argsort(-data.dot(query))[:k] 
+                interval = time.time() - start
+                return interval, res
 
         times = []
         results = []
