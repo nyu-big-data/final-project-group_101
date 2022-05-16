@@ -90,10 +90,18 @@ def main(spark, netID):
     dataset_test = label_test.join(predictions_test, label_test.userId == predictions_test.userId, 'right')
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
+
+    # generate item vector and user vector
+
+    user_vec = model.userFactors.toDF(['id','features'])
+    item_vec = model.itemFactors.toDF(['id','features'])
     
     als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
     als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
     als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
+
+    als_annoy_user_path = "hdfs:/user/" + netID + "/user_vec.parquet"
+    als_annoy_item_path = "hdfs:/user/" + netID + "/item_vec.parquet"
 
     dataset_val.createOrReplaceTempView('dataset_val')
     dataset_test.createOrReplaceTempView('dataset_test')
@@ -113,6 +121,8 @@ def main(spark, netID):
     dataset_val.write.parquet(als_annoy_val_path)
     dataset_test.write.parquet(als_annoy_test_path)
     dataset_train.write.parquet(als_annoy_train_path)
+    user_vec.write.parquet(als_annoy_user_path)
+    item_vec.write.parquet(als_annoy_item_path)
     
     
 
