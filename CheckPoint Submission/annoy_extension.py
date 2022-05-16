@@ -42,7 +42,7 @@ def main(spark, netID):
     #val=spark.read.parquet(small_val_path)
     #test =spark.read.parquet(small_test_path)
     user =spark.read.parquet(user_vector_path)
-    vec =spark.read.parquet(item_vector_path)
+    item =spark.read.parquet(item_vector_path)
 
     user.createOrReplaceTempView("user")
     item.createOrReplaceTempView("item")
