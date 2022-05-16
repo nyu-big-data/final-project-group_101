@@ -91,9 +91,9 @@ def main(spark, netID):
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
-    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.csv"
-    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.csv"
-    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.csv"
+    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.txt"
+    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.txt"
+    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.txt"
 
     dataset_val.createOrReplaceTempView('dataset_val')
     dataset_test.createOrReplaceTempView('dataset_test')
