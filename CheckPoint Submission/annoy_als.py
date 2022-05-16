@@ -7,6 +7,7 @@ Usage:
 #Use getpass to obtain user netID
 import getpass
 
+pip install numpy
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
 import numpy
