@@ -5,6 +5,10 @@ Usage:
     $ spark-submit lab_3_starter_code.py <student_netID>
 '''
 #Use getpass to obtain user netID
+pip install pyspark
+pip install annoy
+pip install pyarrow
+
 import getpass
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
@@ -117,6 +121,63 @@ def main(spark, netID):
 
 
    
+    ## Fast search with annoy
+
+    f = len(item_vec[0])
+    t = AnnoyIndex(f, metric='dot') 
+    for i in range(len(item_vec)):
+        t.add_item(i, item_vec[i])
+    t.build(10)
+
+    def wrap_with(obj, method, mapping): 
+        '''
+        obj: the model that can respond to the query
+        method: the name of the query method
+        mapping: what input be mapped
+        '''
+        get_map = lambda x: [x[mapping[i]] for i in range(len(mapping))]
+        def wrapped(*args, **kwrds):
+            return obj.__getattribute__(method)(*get_map(args)) 
+        return wrapped
+
+
+    def find_nearest_algo(data, queries, true_label, model_wrapped, k,extra_para): 
+        if len(data.shape) == 1:
+            data = np.array([x for x in data])
+
+        n_items = data.shape[0]
+        n_feat = data.shape[1]
+        n_queries = len(queries)
+
+        def single_query(query):
+            start = time.time()
+            res = model_wrapped(query, k, extra_para) 
+            interval = time.time() - start
+            return interval, res
+
+        def get_recall(predict, truth):
+            return len([x for x in predict if x in truth]) / len(truth)
+
+        times = []
+        recalls = []
+
+        for i in tqdm(range(n_queries)):
+            interval, res = single_query(queries[i]) 
+            recall = get_recall(res, true_label[i]) 
+            times.append(interval) 
+            recalls.append(recall)
+
+        mean_time = sum(times) / len(times) 
+        mean_recall = sum(recalls) / len(recalls)
+        print('-' * 26)
+        print('Mean Query Search Time: %.6f' % mean_time) 
+        print('Mean Recall: %.6f' % mean_recall)
+        return mean_time, mean_recall
+
+    wrapped = wrap_with(t, 'get_nns_by_vector', [0, 1, 2])
+    find_nearest_algo(item_vec,user_vec, bf_results, wrapped, 10, 100) 
+
+
 # Only enter this block if we're in main
 if __name__ == "__main__":
 
