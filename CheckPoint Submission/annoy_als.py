@@ -58,7 +58,7 @@ def main(spark, netID):
     #train al dataset generation
     label_train = ratings_small_train.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
     label_train = label_train.filter("userId is not null").select("label", "userId")
-    label_train = label_train.withColumn('label', col('label').cast(ArrayType(DoubleType())))
+    label_train = label_train.withColumn('label', col('label').cast('string'))
 
     predictions_train = model.recommendForUserSubset(label_train, 100)
     predictions_train.createOrReplaceTempView('predictions_train')
@@ -91,9 +91,9 @@ def main(spark, netID):
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
-    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.txt"
-    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.txt"
-    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.txt"
+    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.parquet"
+    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
+    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
 
     dataset_val.createOrReplaceTempView('dataset_val')
     dataset_test.createOrReplaceTempView('dataset_test')
@@ -110,9 +110,9 @@ def main(spark, netID):
     #dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
     #dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
 
-    dataset_val.write.text(als_annoy_val_path)
-    dataset_test.write.text(als_annoy_test_path)
-    dataset_train.write.text(als_annoy_train_path)
+    dataset_val.write.parquet(als_annoy_val_path)
+    dataset_test.write.parquet(als_annoy_test_path)
+    dataset_train.write.parquet(als_annoy_train_path)
     
     
 
