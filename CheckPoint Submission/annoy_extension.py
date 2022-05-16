@@ -16,6 +16,7 @@ from pyspark.ml.recommendation import ALS
 from pathlib import Path
 import pickle
 import os
+import pandas as pd
 
 
 def main(spark, netID):
