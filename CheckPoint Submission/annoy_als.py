@@ -9,12 +9,14 @@ import getpass
 
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
+import numpy
 
 from pyspark.sql.functions import collect_list, explode, array_repeat, col
 from pyspark.sql.types import ArrayType, DoubleType
 from pyspark.ml.evaluation import RankingEvaluator
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
+
 
 def main(spark, netID):
     '''Main routine for Lab Solutions
