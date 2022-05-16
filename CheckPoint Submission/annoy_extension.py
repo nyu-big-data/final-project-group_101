@@ -51,14 +51,14 @@ def main(spark, netID):
     #val.createOrReplaceTempView("val_table")
     #test.createOrReplaceTempView("test_table")
 
-    spark.sql("select id,feature from user").show()
-    spark.sql("select id,feature from item").show()
+    spark.sql("select id,features from user").show()
+    spark.sql("select id,features from item").show()
 
-    useru = spark.sql("select id,feature from user").toDF('id','feature')
+    useru = spark.sql("select id,features from user").toDF('id','features')
     useru = useru.toPandas()
 
 
-    itemu = spark.sql("select id,feature from item").toDF('id','feature')
+    itemu = spark.sql("select id,features from item").toDF('id','features')
     itemu = itemu.toPandas()
 
 
