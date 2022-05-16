@@ -98,6 +98,11 @@ def main(spark, netID):
     dataset_val.createOrReplaceTempView('dataset_val')
     dataset_test.createOrReplaceTempView('dataset_test')
     dataset_train.createOrReplaceTempView('dataset_train')
+
+    newNames = ['label','userId', 'userId2', 'prediction']
+    dataset_val= dataset_val.toDF(*newNames)
+    dataset_test= dataset_test.toDF(*newNames)
+    dataset_train= dataset_train.toDF(*newNames)
     
     dataset_val.show()
     dataset_val.write.csv(als_annoy_val_path)
