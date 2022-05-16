@@ -34,7 +34,7 @@ def main(spark, netID):
     small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.parquet"
     small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
 
-    train = pd.read_parquet(small_train_path,, engine='pyarrow')
+    train = pd.read_parquet(small_train_path, engine='pyarrow')
     train.head()
     print(train.head())
 
