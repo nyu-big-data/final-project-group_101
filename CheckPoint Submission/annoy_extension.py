@@ -82,21 +82,31 @@ def main(spark, netID):
 
     #Brute search
 
-    def find_nearest_exhaustive(data, queries, k): #top-k recommendat if len(data.shape) == 1:
-        data = np.array([x for x in data]) n_items = data.shape[0]
+    def find_nearest_exhaustive(data, queries, k): #top-k recommendat 
+        if len(data.shape) == 1:
+            data = np.array([x for x in data]) 
+        n_items = data.shape[0]
         n_feat = data.shape[1]
         n_queries = len(queries)
+
             def single_query(query):
             start = time.time()
             if type(query) is not np.ndarray:
-            query = np.array(query)
-            res = np.argsort(-data.dot(query))[:k] interval = time.time() - start
+                query = np.array(query)
+            res = np.argsort(-data.dot(query))[:k] 
+            interval = time.time() - start
             return interval, res
+
         times = []
         results = []
         for i in tqdm(range(n_queries)): #tqdm for loop visualization
-        interval, res = single_query(queries[i]) times.append(interval) results.append(res)
-        mean_time = sum(times) / len(times) print('Exhaustive Brute-force Search\n')
+            interval, res = single_query(queries[i]) 
+            times.append(interval) 
+            results.append(res)
+            
+        mean_time = sum(times) / len(times) 
+
+        print('Exhaustive Brute-force Search\n')
         print('Mean Query Search: %.6f' % mean_time) 
         return mean_time, results
 
