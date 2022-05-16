@@ -134,7 +134,7 @@ def main(spark, netID):
         return wrapped
 
 
-    def find_nearest_algo(data, queries, true_label, model_wrapped, k,extra_para) 
+    def find_nearest_algo(data, queries, true_label, model_wrapped, k,extra_para): 
         if len(data.shape) == 1:
             data = np.array([x for x in data])
 
