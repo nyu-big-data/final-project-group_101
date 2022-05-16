@@ -99,9 +99,10 @@ def main(spark, netID):
     dataset_test.createOrReplaceTempView('dataset_test')
     dataset_train.createOrReplaceTempView('dataset_train')
     
-    dataset_val.write.csv(als_annoy_val_path)
-    dataset_test.write.csv(als_annoy_test_path)
-    dataset_train.write.csv(als_annoy_train_path)
+    dataset_val.show()
+    #dataset_val.write.csv(als_annoy_val_path)
+    #dataset_test.write.csv(als_annoy_test_path)
+    #dataset_train.write.csv(als_annoy_train_path)
     
     
 
