@@ -13,7 +13,9 @@ from pyspark.sql.types import ArrayType, DoubleType
 from pyspark.ml.evaluation import RankingEvaluator
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
+from pathlib import Path
 import pickle
+import os
 
 
 def main(spark, netID):
@@ -24,14 +26,19 @@ def main(spark, netID):
     netID : string, netID of student to find files in HDFS
     '''
     print('Final Project Fast search on Small')
-
+    netID = getpass.getuser()
 
     print('Reading ratings.csv and specifying schema')
     small_train_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.pkl"
     small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.pkl"
     small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.pkl"
 
-    file = open(small_train_path , 'rb')
+
+    current_directory = Path(__file__).parent #Get current directory
+    file = open(os.path.join(current_directory, "hdfs:/user/" + netID+"/","als_annoy_small_validation.pkl" ), 'rb') #rb = read bytes because we are reading the file
+     
+    #loadedData = pickle.load(file)
+    #file = open('hdfs://horton.hpc.nyu.edu:8020/user/rz2432/als_annoy_small_validation.pkl', 'rb')
 
     
     small_train = pickle.load(file)
