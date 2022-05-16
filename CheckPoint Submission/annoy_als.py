@@ -106,9 +106,9 @@ def main(spark, netID):
     
     dataset_val.show()
 
-    dataset_val.rdd.saveAsPickleFile(als_annoy_val_path)
-    dataset_test.rdd.saveAsPickleFile(als_annoy_test_path)
-    dataset_train.rdd.saveAsPickleFile(als_annoy_train_path)
+    dataset_val.rdd.saveAsPickleFile("als_annoy_small_validation.pkl")
+    dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
+    dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
 
     #dataset_val.write.csv(als_annoy_val_path)
     #dataset_test.write.csv(als_annoy_test_path)
