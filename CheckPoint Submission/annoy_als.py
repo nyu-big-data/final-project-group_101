@@ -65,7 +65,7 @@ def main(spark, netID):
 
     predictions_train = predictions_train.select("userId", "recommendations.movieId")
     predictions_train= predictions_train.withColumnRenamed("movieId", "prediction")
-    dataset_train = label_train.join(predictions_train,label_train.userId == predictions_train.userId, 'inner')
+    dataset_train = label_train.join(predictions_train,label_train.userId == predictions_train.userId, 'right')
     dataset_train = dataset_train.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_train = dataset_train.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
@@ -76,7 +76,7 @@ def main(spark, netID):
 
     predictions_val = predictions_val.select("userId", "recommendations.movieId")
     predictions_val = predictions_val.withColumnRenamed("movieId", "prediction")
-    dataset_val = label_val.join(predictions_val, label_val.userId == predictions_val.userId, 'inner')
+    dataset_val = label_val.join(predictions_val, label_val.userId == predictions_val.userId, 'right')
     dataset_val = dataset_val.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_val = dataset_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
@@ -87,7 +87,7 @@ def main(spark, netID):
 
     predictions_test = predictions_test.select("userId", "recommendations.movieId")
     predictions_test = predictions_test.withColumnRenamed("movieId", "prediction")
-    dataset_test = label_test.join(predictions_test, label_test.userId == predictions_test.userId, 'inner')
+    dataset_test = label_test.join(predictions_test, label_test.userId == predictions_test.userId, 'right')
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
@@ -100,9 +100,9 @@ def main(spark, netID):
     dataset_train.createOrReplaceTempView('dataset_train')
     
     dataset_val.show()
-    #dataset_val.write.csv(als_annoy_val_path)
-    #dataset_test.write.csv(als_annoy_test_path)
-    #dataset_train.write.csv(als_annoy_train_path)
+    dataset_val.write.csv(als_annoy_val_path)
+    dataset_test.write.csv(als_annoy_test_path)
+    dataset_train.write.csv(als_annoy_train_path)
     
     
 
