@@ -51,6 +51,9 @@ def main(spark, netID):
     #val.createOrReplaceTempView("val_table")
     #test.createOrReplaceTempView("test_table")
 
+    spark.sql("select id,feature from user").show()
+    spark.sql("select id,feature from item").show()
+
     useru = spark.sql("select id,feature from user").toDF('id','feature')
     useru = useru.toPandas()
 
@@ -67,6 +70,8 @@ def main(spark, netID):
 
     #testu = spark.sql("select label,userId,prediction from test_table").toDF('label','userId','prediction')
     #testu = testu.toPandas()
+
+
 
 
 
