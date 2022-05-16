@@ -128,9 +128,9 @@ def main(spark, netID):
         method: the name of the query method
         mapping: what input be mapped
         '''
-        get_map = lambda x: [x[mapping[i]] for i in range(len(mapping))] 
-            def wrapped(*args, **kwrds):
-                return obj.__getattribute__(method)(*get_map(args)) 
+        get_map = lambda x: [x[mapping[i]] for i in range(len(mapping))]
+        def wrapped(*args, **kwrds):
+            return obj.__getattribute__(method)(*get_map(args)) 
         return wrapped
 
 
