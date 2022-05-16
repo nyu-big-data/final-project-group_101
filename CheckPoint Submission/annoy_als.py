@@ -114,13 +114,9 @@ def main(spark, netID):
     
     dataset_val.show()
 
-    #dataset_val.rdd.saveAsPickleFile("als_annoy_small_validation.pkl")
-    #dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
-    #dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
-
-    dataset_val.write.parquet(als_annoy_val_path)
-    dataset_test.write.parquet(als_annoy_test_path)
-    dataset_train.write.parquet(als_annoy_train_path)
+    #dataset_val.write.parquet(als_annoy_val_path)
+    #dataset_test.write.parquet(als_annoy_test_path)
+    #dataset_train.write.parquet(als_annoy_train_path)
     user_vec.write.parquet(als_annoy_user_path)
     item_vec.write.parquet(als_annoy_item_path)
     
