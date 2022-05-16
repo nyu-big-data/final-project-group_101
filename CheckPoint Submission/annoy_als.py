@@ -58,7 +58,7 @@ def main(spark, netID):
     #train al dataset generation
     label_train = ratings_small_train.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
     label_train = label_train.filter("userId is not null").select("label", "userId")
-    label_train = label_train..withColumn('label', col('label').cast(ArrayType(DoubleType())))
+    label_train = label_train.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
     predictions_train = model.recommendForUserSubset(label_train, 100)
     predictions_train.createOrReplaceTempView('predictions_train')
