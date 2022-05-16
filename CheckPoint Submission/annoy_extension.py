@@ -23,7 +23,7 @@ import time
 import numpy as np
 from tqdm import tqdm_notebook as tqdm 
 import matplotlib.pyplot as plt 
-import annoy
+from annoy import AnnoyIndex
 #pip install pyarrow
 
 
