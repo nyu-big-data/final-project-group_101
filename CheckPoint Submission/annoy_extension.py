@@ -18,7 +18,7 @@ import pickle
 import os
 import pandas as pd
 #pip install pyarrow
-import pyarrow
+#import pyarrow
 
 
 def main(spark, netID):
