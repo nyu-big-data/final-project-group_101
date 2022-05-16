@@ -17,7 +17,7 @@ from pathlib import Path
 import pickle
 import os
 import pandas as pd
-pip install pyarrow
+#pip install pyarrow
 import pyarrow
 
 
