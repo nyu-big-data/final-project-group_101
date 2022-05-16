@@ -6,11 +6,8 @@ Usage:
 '''
 #Use getpass to obtain user netID
 import getpass
-
-pip install numpy
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
-import numpy
 from pyspark.sql.functions import collect_list, explode, array_repeat, col
 from pyspark.sql.types import ArrayType, DoubleType
 from pyspark.ml.evaluation import RankingEvaluator
