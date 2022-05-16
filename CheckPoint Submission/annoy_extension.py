@@ -36,8 +36,24 @@ def main(spark, netID):
     small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.parquet"
 
     train =spark.read.parquet(small_train_path)
-    train.createOrReplaceTempView("small_train_table")
-    parkSQL = spark.sql("select * from small_train_table").show()
+    val=spark.read.parquet(small_val_path)
+    test =spark.read.parquet(small_test_path)
+
+
+    train.createOrReplaceTempView("train_table")
+    val.createOrReplaceTempView("val_table")
+    test.createOrReplaceTempView("test_table")
+
+
+    trainu = spark.sql("select label,userId,prediction from train_table").toDF()
+    trainu = trainu.toPandas()
+
+    valu = spark.sql("select label,userId,prediction from val_table").toDF()
+    valu = valu.toPandas()
+
+    testu = spark.sql("select label,userId,prediction from test_table").toDF()
+    testu = test.toPandas()
+
 
 
 
