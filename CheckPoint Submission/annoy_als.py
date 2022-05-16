@@ -110,9 +110,9 @@ def main(spark, netID):
     #dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
     #dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
 
-    dataset_val.write.csv(als_annoy_val_path)
-    dataset_test.write.csv(als_annoy_test_path)
-    dataset_train.write.csv(als_annoy_train_path)
+    dataset_val.write.text(als_annoy_val_path)
+    dataset_test.write.text(als_annoy_test_path)
+    dataset_train.write.text(als_annoy_train_path)
     
     
 
