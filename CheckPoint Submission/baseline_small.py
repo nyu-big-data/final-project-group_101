@@ -42,6 +42,7 @@ def main(spark, netID):
     
 
     # generate top 100 movie and convert to a list
+    # query_train = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)) AS Utility_Score from ratings_small_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
     query_train = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)+101) AS Utility_Score from ratings_small_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
     top100 = query_train.select("movieId")
     top100 = top100.agg(collect_list("movieId"))
@@ -57,9 +58,17 @@ def main(spark, netID):
     temp_val = temp_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     dataset_val = temp_val.join(top100)
     
-    evaluator = RankingEvaluator()
-    evaluator.setPredictionCol("prediction")
-    val_MAP = evaluator.evaluate(dataset_val)
+
+    
+    # MAP_evaluator = RankingEvaluator(metricName = "meanAveragePrecision").setPredictionCol("prediction")
+    MAP_evaluator = RankingEvaluator(metricName = "meanAveragePrecisionAtK", k = 100).setPredictionCol("prediction")
+    NDCG_evaluator = RankingEvaluator(metricName = "ndcgAtK", k = 100).setPredictionCol("prediction")
+
+    # val_MAP = MAP_evaluator.evaluate(dataset_val)
+    val_MAP = MAP_evaluator.evaluate(dataset_val)
+    val_NDCG = NDCG_evaluator.evaluate(dataset_val)
+    
+    
     print("Validation Set Finished")
     
     
@@ -72,13 +81,19 @@ def main(spark, netID):
     print("Test Set Finished")
     
     
-    evaluator = RankingEvaluator()
-    evaluator.setPredictionCol("prediction")
-    test_MAP = evaluator.evaluate(dataset_test)
+    # MAP_evaluator = RankingEvaluator(metricName = "meanAveragePrecision").setPredictionCol("prediction")
+    MAP_evaluator = RankingEvaluator(metricName = "meanAveragePrecisionAtK", k = 100).setPredictionCol("prediction")
+    NDCG_evaluator = RankingEvaluator(metricName = "ndcgAtK", k = 100).setPredictionCol("prediction")
+
+    # test_MAP = MAP_evaluator.evaluate(dataset_test)
+    test_MAP = MAP_evaluator.evaluate(dataset_test)
+    test_NDCG = NDCG_evaluator.evaluate(dataset_test)
     
     
     print("Validation Set Performence with MAP: ", val_MAP)
+    print("Validation Set Performence with NDCG: ", val_NDCG)
     print("Test Set Performence with MAP: ", test_MAP)
+    print("Test Set Performence with NDCG: ", test_NDCG)
 
 
 # Only enter this block if we're in main

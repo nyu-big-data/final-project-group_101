@@ -37,15 +37,30 @@ def main(spark, netID):
     ratings_full_train.createOrReplaceTempView('ratings_full_train')
     print("finish part 2")
 
-
-    # generate top 100 movie and convert to a list
+    # generate top 100 movie without dumping variable and convert to a list
+    query_train_NoD = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)) AS Utility_Score from ratings_full_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
+    top100_NoD = query_train_NoD.select("movieId")
+    print("finish part 3")
+    top100_NoD_path = "hdfs:/user/" + netID + "/top100_full_NoD.csv"
+    top100_NoD.createOrReplaceTempView('top100_NoD')
+    top100_NoD.write.csv(top100_NoD_path)
+    
+    
+    # generate top 100 movie with dumping = 101 and convert to a list
     query_train = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)+101) AS Utility_Score from ratings_full_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
     top100 = query_train.select("movieId")
-    print("finish part 3")
+    print("finish part 4")
     top100_path = "hdfs:/user/" + netID + "/top100_full.csv"
     top100.createOrReplaceTempView('top100')
     top100.write.csv(top100_path)
     
+    # generate top 100 movie with dumping = 10100 and convert to a list
+    query_train_D = spark.sql('SELECT movieId, SUM(rating)/(COUNT(rating)+10100) AS Utility_Score from ratings_full_train GROUP BY movieId ORDER BY Utility_Score DESC limit 100')
+    top100_D = query_train_D.select("movieId")
+    print("finish part 5")
+    top100_D_path = "hdfs:/user/" + netID + "/top100_full_D.csv"
+    top100_D.createOrReplaceTempView('top100_D')
+    top100_D.write.csv(top100_D_path)
 
 
 
