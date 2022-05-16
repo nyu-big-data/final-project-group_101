@@ -31,8 +31,10 @@ def main(spark, netID):
     small_val_path = "hdfs:/user/" + netID + "/als_annoy_small_test.pkl"
     small_test_path = "hdfs:/user/" + netID + "/als_annoy_small_train.pkl"
 
+    file = open(small_train_path , 'rb')
+
     
-    small_train = pickle.load(open(small_train_path , 'rb'))
+    small_train = pickle.load(file)
     print(small_train)
 
 
