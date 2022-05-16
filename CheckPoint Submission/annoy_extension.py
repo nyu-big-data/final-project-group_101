@@ -5,9 +5,9 @@ Usage:
     $ spark-submit lab_3_starter_code.py <student_netID>
 '''
 #Use getpass to obtain user netID
-pip install pyspark
-pip install annoy
-pip install pyarrow
+pip-install pyspark
+pip-install annoy
+pip-install pyarrow
 
 import getpass
 # And pyspark.sql to get the spark session
