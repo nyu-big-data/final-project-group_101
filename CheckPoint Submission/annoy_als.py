@@ -91,9 +91,9 @@ def main(spark, netID):
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
-    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.pkl"
-    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.pkl"
-    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.pkl"
+    als_annoy_val_path = "hdfs:/user/" + netID + "/als_annoy_small_validation.csv"
+    als_annoy_test_path = "hdfs:/user/" + netID + "/als_annoy_small_test.csv"
+    als_annoy_train_path = "hdfs:/user/" + netID + "/als_annoy_small_train.csv"
 
     dataset_val.createOrReplaceTempView('dataset_val')
     dataset_test.createOrReplaceTempView('dataset_test')
@@ -106,13 +106,13 @@ def main(spark, netID):
     
     dataset_val.show()
 
-    dataset_val.rdd.saveAsPickleFile("als_annoy_small_validation.pkl")
-    dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
-    dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
+    #dataset_val.rdd.saveAsPickleFile("als_annoy_small_validation.pkl")
+    #dataset_test.rdd.saveAsPickleFile("als_annoy_small_test.pkl")
+    #dataset_train.rdd.saveAsPickleFile("als_annoy_small_train.pkl")
 
-    #dataset_val.write.csv(als_annoy_val_path)
-    #dataset_test.write.csv(als_annoy_test_path)
-    #dataset_train.write.csv(als_annoy_train_path)
+    dataset_val.write.csv(als_annoy_val_path)
+    dataset_test.write.csv(als_annoy_test_path)
+    dataset_train.write.csv(als_annoy_train_path)
     
     
 
