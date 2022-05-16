@@ -113,8 +113,10 @@ def main(spark, netID):
         return mean_time, results
 
     bf_mean_time, bf_results = find_nearest_exhaustive(item_vec,user_vec,10)
+    print(bf_results)
 
 
+   '''
     ## Fast search with annoy
 
     f = len(item_vec[0])
@@ -171,7 +173,7 @@ def main(spark, netID):
     wrapped = wrap_with(t, 'get_nns_by_vector', [0, 1, 2])
     find_nearest_algo(item_vec,user_vec, bf_results, wrapped, 10, 100) 
 
-
+'''
 # Only enter this block if we're in main
 if __name__ == "__main__":
 
