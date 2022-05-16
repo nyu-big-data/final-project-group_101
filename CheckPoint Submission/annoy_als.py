@@ -117,8 +117,8 @@ def main(spark, netID):
     #dataset_val.write.parquet(als_annoy_val_path)
     #dataset_test.write.parquet(als_annoy_test_path)
     #dataset_train.write.parquet(als_annoy_train_path)
-    user_vec.write.parquet(als_annoy_user_path)
-    item_vec.write.parquet(als_annoy_item_path)
+    user_vec.write.parquet(user_vec1.parquet)
+    item_vec.write.parquet(item_vec1.parquet)
     
     
 
