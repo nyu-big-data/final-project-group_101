@@ -48,16 +48,16 @@ def main(spark, netID):
     
     
     
-    rank_set = 100
+    rank_set = 500
     maxIter = 10
-    regParam = 0.1
-    alpha = 10
+    regParam = 0.00001 
+    alpha = 5
     grid =[rank_set, maxIter, regParam, alpha]
     
     
     # build the model
         
-    als = ALS(rank = 100,maxIter = 10,regParam = 0.1,alpha = 10, userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
+    als = ALS(rank = rank_set ,maxIter = maxIter,regParam = regParam,alpha = alpha, userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
     model = als.fit(ratings_full_train)
         
     
