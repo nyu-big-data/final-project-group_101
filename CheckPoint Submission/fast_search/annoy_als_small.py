@@ -51,7 +51,7 @@ def main(spark, netID):
     
     
     # build the model
-    als = ALS(rank = 100, maxIter=10, regParam=0.1, alpha = 10, userCol="userId", itemCol="movieId", ratingCol="rating",
+    als = ALS(rank = 100, maxIter=20, regParam=0.1, alpha = 10, userCol="userId", itemCol="movieId", ratingCol="rating",
           coldStartStrategy="drop")
     model = als.fit(ratings_small_train)
     
