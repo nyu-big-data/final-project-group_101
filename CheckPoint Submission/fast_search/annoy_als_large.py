@@ -87,6 +87,9 @@ def main(spark, netID):
     dataset_val = dataset_val.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_val = dataset_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
+
+
+    '''
     MAP_evaluator = RankingEvaluator(metricName='meanAveragePrecisionAtK', k = 100).setPredictionCol("prediction")
     NDCG_evaluator = RankingEvaluator(metricName = "ndcgAtK", k = 100).setPredictionCol("prediction")
     val_MAP = MAP_evaluator.evaluate(dataset_val)
@@ -95,7 +98,7 @@ def main(spark, netID):
     
     print('{:>15} {:>15} {:>15} {:>15} {:>15} {:>15}'.format("rank", "regParam", "alpha", "maxIter", "val_MAP", "val_NDCG"))
     print('{:15.2f} {:15.2f} {:15.6f} {:15.2f} {:15.6f} {:15.6f}'.format(grid[0], grid[1], grid[2], grid[3], val_MAP, val_NDCG))
-
+    '''
     
     
     # Test Prediction
