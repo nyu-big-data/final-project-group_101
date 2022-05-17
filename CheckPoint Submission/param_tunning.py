@@ -31,8 +31,8 @@ def main(spark, netID):
 
 
     print('Reading ratings.csv and specifying schema')
-    full_train_path = "hdfs:/user/" + netID + "/ratings_full_train.csv"
-    full_val_path = "hdfs:/user/" + netID + "/ratings_full_val.csv"
+    full_train_path = "ratings_full_train.csv"
+    full_val_path = "ratings_full_val.csv"
     
     ratings_full_train = spark.read.csv(full_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
     ratings_full_val = spark.read.csv(full_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')

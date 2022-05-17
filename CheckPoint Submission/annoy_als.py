@@ -83,7 +83,6 @@ def main(spark, netID):
     
     # Test Prediction
     predictions_test = model.recommendForUserSubset(label_test, 100)
-    predictions_test.getUserCol()
     predictions_test.createOrReplaceTempView('predictions_test')
 
     predictions_test = predictions_test.select("userId", "recommendations.movieId")
