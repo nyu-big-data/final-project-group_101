@@ -51,7 +51,7 @@ def main(spark, netID):
     
     
     rank_set = 200
-    maxIter = 15
+    maxIter = 20
     regParam = 0.01
     alpha = 5
     grid =[rank_set, maxIter, regParam, alpha]
