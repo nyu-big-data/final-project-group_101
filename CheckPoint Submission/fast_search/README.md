@@ -1,5 +1,5 @@
 # DSGA1004 - BIG DATA
-## Final project-Check Point Submission
+## Extension 2: Fast Search Vs Brute froce comparison
 **Group Number:** 101
 
 
