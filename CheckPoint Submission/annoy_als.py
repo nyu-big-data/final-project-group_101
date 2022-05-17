@@ -72,6 +72,7 @@ def main(spark, netID):
     
     # Validation Prediction
     predictions_val = model.recommendForUserSubset(label_val, 100)
+    predictions_val.userFactors.show()
     predictions_val.createOrReplaceTempView('predictions_val')
 
     predictions_val = predictions_val.select("userId", "recommendations.movieId")
@@ -83,6 +84,9 @@ def main(spark, netID):
     
     # Test Prediction
     predictions_test = model.recommendForUserSubset(label_test, 100)
+
+    predictions_test.userFactors.show()
+
     predictions_test.createOrReplaceTempView('predictions_test')
 
     predictions_test = predictions_test.select("userId", "recommendations.movieId")
@@ -91,8 +95,6 @@ def main(spark, netID):
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
-    predictions_test.userFactors.show()
-    predictions_val.userFactors.show()
 
     # generate item vector and user vector
 
