@@ -91,6 +91,9 @@ def main(spark, netID):
     dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
 
+    predictions_test.userFactors.show()
+    predictions_val.userFactors.show()
+
     # generate item vector and user vector
 
     user_vec = model.userFactors.toDF('id','features')
