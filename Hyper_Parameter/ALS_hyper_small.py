@@ -16,6 +16,11 @@ from pyspark.ml.evaluation import RankingEvaluator
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 
+import itertools
+import numpy as np
+import pandas as pd
+import time
+    
 def main(spark, netID):
     '''Main routine for Lab Solutions
     Parameters
@@ -28,66 +33,65 @@ def main(spark, netID):
 
     print('Reading ratings.csv and specifying schema')
     small_train_path = "hdfs:/user/" + netID + "/ratings_small_train.csv"
-    small_val_path = "hdfs:/user/" + netID + "/ratings_small_val.csv"
-    small_test_path = "hdfs:/user/" + netID + "/ratings_small_test.csv"
+    small_val_path = "hdfs:/user/" + netID + "/ratings_small_test.csv"
     
     ratings_small_train = spark.read.csv(small_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
     ratings_small_val = spark.read.csv(small_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
-    ratings_small_test = spark.read.csv(small_test_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
 
     # Give the dataframe a temporary view so we can run SQL queries
     ratings_small_train.createOrReplaceTempView('ratings_small_train')
     ratings_small_val.createOrReplaceTempView('ratings_small_val')
-    ratings_small_test.createOrReplaceTempView('ratings_small_test')
     
     # Create Label(actual value) for validation set
     label_val = ratings_small_val.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
     label_val = label_val.filter("userId is not null").select("label", "userId")
     label_val = label_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
-    # Create Label(actual value) for test set
-    label_test = ratings_small_test.groupby("userId").agg(collect_list("movieId")).withColumnRenamed("collect_list(movieId)", "label")
-    label_test = label_test.filter("userId is not null").select("label", "userId")
-    label_test = label_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
+    
+    
+    
+    rank_set = 150
+    maxIter = 20
+    regParam = 1e-4
+    alpha = 5
+    grid =[rank_set, maxIter, regParam, alpha]
+    
     
     
     
     # build the model
-    als = ALS(rank = 100, maxIter=10, regParam=0.1, alpha = 10, userCol="userId", itemCol="movieId", ratingCol="rating",
-          coldStartStrategy="drop")
-    model = als.fit(ratings_small_train)
     
+    start = time.time()
+    als = ALS(rank = grid[0], maxIter=grid[1], regParam=grid[2], alpha = grid[3], userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
+    model = als.fit(ratings_small_train)
+        
     
     # Validation Prediction
     predictions_val = model.recommendForUserSubset(label_val, 100)
     predictions_val.createOrReplaceTempView('predictions_val')
-
-    predictions_val = predictions_val.select("userId", "recommendations.movieId")
-    predictions_val = predictions_val.withColumnRenamed("movieId", "prediction")
+    predictions_val = predictions_val.select("userId", "recommendations.movieId").withColumnRenamed("movieId", "prediction")
+    
+    # predictions_val = predictions_val.withColumnRenamed("movieId", "prediction")
     dataset_val = label_val.join(predictions_val, label_val.userId == predictions_val.userId, 'inner').select("prediction", "label")
     dataset_val = dataset_val.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
     dataset_val = dataset_val.withColumn('label', col('label').cast(ArrayType(DoubleType())))
     
     
-    # Test Prediction
-    predictions_test = model.recommendForUserSubset(label_test, 100)
-    predictions_test.createOrReplaceTempView('predictions_test')
+    MAP_evaluator = RankingEvaluator(metricName='meanAveragePrecisionAtK', k = 100).setPredictionCol("prediction")
+    NDCG_evaluator = RankingEvaluator(metricName = "ndcgAtK", k = 100).setPredictionCol("prediction")
+    PREC_evaluator = RankingEvaluator(metricName = "precisionAtK", k = 100).setPredictionCol("prediction")
+    val_MAP = MAP_evaluator.evaluate(dataset_val)
+    val_NDCG = NDCG_evaluator.evaluate(dataset_val)
+    val_PREC = PREC_evaluator.evaluate(dataset_val)
+    
+    end = time.time()
+    print('{:>15} {:>15} {:>15} {:>15} {:>15} {:>15} {:>15}'.format("rank", "maxIter", "regParam", "alpha", "val_MAP", "val_NDCG", "val_PREC"))
+    print('{:15.2f} {:15.2f} {:15.6f} {:15.2f} {:15.6f} {:15.6f} {:15.6f}'.format(grid[0], grid[1], grid[2], grid[3], val_MAP, val_NDCG, val_PREC))
+    
+    print ("running time: ", end -start, "s")
+    print("start: ", start)
+    print("end: ", end)
 
-    predictions_test = predictions_test.select("userId", "recommendations.movieId")
-    predictions_test = predictions_test.withColumnRenamed("movieId", "prediction")
-    dataset_test = label_test.join(predictions_test, label_test.userId == predictions_test.userId, 'inner').select("prediction", "label")
-    dataset_test = dataset_test.withColumn('prediction', col('prediction').cast(ArrayType(DoubleType())))
-    dataset_test = dataset_test.withColumn('label', col('label').cast(ArrayType(DoubleType())))
-    
-    
-    
-    evaluator = RankingEvaluator(metricName='meanAveragePrecision')
-    evaluator.setPredictionCol("prediction")
-    val_MAP = evaluator.evaluate(dataset_val)
-    print("Validation Performence with MAP: ", val_MAP)
-    
-    test_MAP = evaluator.evaluate(dataset_test)
-    print("Test Performence with MAP: ", test_MAP)
-    
+
     
 
 
@@ -95,7 +99,8 @@ def main(spark, netID):
 if __name__ == "__main__":
 
     # Create the spark session object
-    spark = SparkSession.builder.appName('baseline').getOrCreate()
+    spark = SparkSession.builder.appName('baseline').config("spark.sql.broadcastTimeout", "36000").getOrCreate()
+
 
     # Get user netID from the command line
     netID = getpass.getuser()

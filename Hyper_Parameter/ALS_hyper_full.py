@@ -19,6 +19,7 @@ from pyspark.ml.recommendation import ALS
 import itertools
 import numpy as np
 import pandas as pd
+import time
     
 def main(spark, netID):
     '''Main routine for Lab Solutions
@@ -31,8 +32,8 @@ def main(spark, netID):
 
 
     print('Reading ratings.csv and specifying schema')
-    full_train_path = "ratings_full_train.csv"
-    full_val_path = "ratings_full_val.csv"
+    full_train_path = "hdfs:/user/" + netID + "/ratings_full_train.csv"
+    full_val_path = "hdfs:/user/" + netID + "/ratings_full_test.csv"
     
     ratings_full_train = spark.read.csv(full_train_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
     ratings_full_val = spark.read.csv(full_val_path, schema='userId INT, movieId INT, rating FLOAT, timestamp INT')
@@ -48,16 +49,19 @@ def main(spark, netID):
     
     
     
-    rank_set = 500
-    maxIter = 10
-    regParam = 0.00001 
+    rank_set = 200
+    maxIter = 20
+    regParam = 0.01
     alpha = 5
     grid =[rank_set, maxIter, regParam, alpha]
     
     
+    
+    
     # build the model
-        
-    als = ALS(rank = rank_set ,maxIter = maxIter,regParam = regParam,alpha = alpha, userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
+    
+    start = time.time()
+    als = ALS(rank = grid[0], maxIter=grid[1], regParam=grid[2], alpha = grid[3], userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
     model = als.fit(ratings_full_train)
         
     
@@ -74,12 +78,18 @@ def main(spark, netID):
     
     MAP_evaluator = RankingEvaluator(metricName='meanAveragePrecisionAtK', k = 100).setPredictionCol("prediction")
     NDCG_evaluator = RankingEvaluator(metricName = "ndcgAtK", k = 100).setPredictionCol("prediction")
+    PREC_evaluator = RankingEvaluator(metricName = "precisionAtK", k = 100).setPredictionCol("prediction")
     val_MAP = MAP_evaluator.evaluate(dataset_val)
     val_NDCG = NDCG_evaluator.evaluate(dataset_val)
+    val_PREC = PREC_evaluator.evaluate(dataset_val)
     
+    end = time.time()
+    print('{:>15} {:>15} {:>15} {:>15} {:>15} {:>15} {:>15}'.format("rank", "maxIter", "regParam", "alpha", "val_MAP", "val_NDCG", "val_PREC"))
+    print('{:15.2f} {:15.2f} {:15.6f} {:15.2f} {:15.6f} {:15.6f} {:15.6f}'.format(grid[0], grid[1], grid[2], grid[3], val_MAP, val_NDCG, val_PREC))
     
-    print('{:>15} {:>15} {:>15} {:>15} {:>15} {:>15}'.format("rank", "regParam", "alpha", "maxIter", "val_MAP", "val_NDCG"))
-    print('{:15.2f} {:15.2f} {:15.6f} {:15.2f} {:15.6f} {:15.6f}'.format(grid[0], grid[1], grid[2], grid[3], val_MAP, val_NDCG))
+    print ("running time: ", start - end, "s")
+    print("start: ", start)
+    print("end: ", end)
 
 
     
@@ -89,7 +99,7 @@ def main(spark, netID):
 if __name__ == "__main__":
 
     # Create the spark session object
-    spark = SparkSession.builder.appName('baseline').getOrCreate()
+    spark = SparkSession.builder.appName('baseline').config("spark.sql.broadcastTimeout", "36000").getOrCreate()
 
 
     # Get user netID from the command line
