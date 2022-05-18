@@ -84,8 +84,8 @@ start = time.time()
 model = LightFM(loss='bpr', no_components = 10, user_alpha = 0.1)
 model = model.fit(interactions = interactions_train, sample_weight= weights_train, 
                   epochs = 1, verbose = False)
-end = time.time()
 val_precision = precision_at_k(model, interactions_val, k = 100).mean()
+end = time.time()
 
 print("LightFM BPR model on small dataset")
 print("Precision at k is:", val_precision)
