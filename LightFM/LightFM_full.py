@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from time import time
+import time
 from scipy.sparse import coo_matrix
 from scipy.sparse import csr_matrix
 import lightfm
@@ -67,26 +67,28 @@ interactions_val, weights_val = data.build_interactions([(ratings_full_val['user
 
 # WARP model
 print("start training WARP model")
-t = time()
-model = LightFM(loss='warp', learning_rate=0.05)
+start = time.time()
+model = LightFM(loss='warp', no_components = 10, user_alpha = 0.1)
 model = model.fit(interactions = interactions_train, sample_weight= weights_train, 
-                  epochs = 10, verbose = False)
+                  epochs = 1, verbose = False)
 t_round = round(time()-t, 5)
 val_precision = precision_at_k(model, interactions_val, k = 100).mean()
+end = time.time()
 
 print("LightFM WARP model on full dataset")
 print("Precision at k is:", val_precision)
-print("Time spent is:", t_round)
+print("Time spent is:", end - start)
 
 # BPR model
 print("start training BPR model")
-t = time()
-model = LightFM(loss='bpr', learning_rate=0.05)
+start = time.time()
+model = LightFM(loss='bpr', no_components = 10, user_alpha = 0.1)
 model = model.fit(interactions = interactions_train, sample_weight= weights_train, 
-                  epochs = 10, verbose = False)
+                  epochs = 1, verbose = False)
 t_round = round(time()-t, 5)
 val_precision = precision_at_k(model, interactions_val, k = 100).mean()
+end = time.time()
 
 print("LightFM BPR model on full dataset")
 print("Precision at k is:", val_precision)
-print("Time spent is:", t_round)
+print("Time spent is:", end - start)
